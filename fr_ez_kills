@@ -1,0 +1,35 @@
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+function findPlayerWithLowestHealth()
+    local lowestHealthPlayer = nil
+    local lowestHealth = math.huge -- Start with an infinitely high number
+
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            local character = player.Character
+            if character and character:FindFirstChild("Humanoid") then
+                local health = character.Humanoid.Health
+                if health < lowestHealth and health > 0 then
+                    lowestHealth = health
+                    lowestHealthPlayer = player
+                end
+            end
+        end
+    end
+
+    return lowestHealthPlayer
+end
+
+function teleportToPlayer(player)
+    if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        local targetPosition = player.Character.HumanoidRootPart.Position
+        LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(targetPosition))
+    end
+end
+
+-- Main Script
+local targetPlayer = findPlayerWithLowestHealth()
+if targetPlayer then
+    teleportToPlayer(targetPlayer)
+end
